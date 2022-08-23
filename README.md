@@ -1,2 +1,2 @@
 # CasualRL
-The code for casualRL experiment
+The code for CasualRL experiment
