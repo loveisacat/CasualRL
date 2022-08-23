@@ -158,7 +158,7 @@ class PPO:
         self.buffer.reset()
 
     def save(self):
-        torch.save(self.actor.state_dict(), "agent10.pkl")
+        torch.save(self.actor.state_dict(), "./models/agent10.pkl")
 
 
 if __name__ == "__main__":
@@ -194,8 +194,8 @@ if __name__ == "__main__":
 
 
 
-    if os.path.exists('agent10.pkl'):
-      algo.actor.state_dict(torch.load("agent10.pkl"))
+    if os.path.exists('./models/agent10.pkl'):
+      algo.actor.state_dict(torch.load("./models/agent10.pkl"))
       count = steps = allreward = maxstep = 0
       minstep = 9999
       test_runs = 1000 
