@@ -9,11 +9,11 @@ The keybox is developed based on https://github.com/Farama-Foundation/gym-exampl
 The gym environment creating example: https://www.gymlibrary.dev/content/environment_creation/    (This site is usually out of service)  
   
 The install tips in that site:  
-"
 This documentation overviews creating new environments and relevant useful wrappers, utilities and tests included in Gym designed for the creation of new environments. You can clone gym-examples to play with the code that are presented here. We recommend that you use a virtual environment:  
 git clone https://github.com/Farama-Foundation/gym-examples  
 cd gym-examples  
 python -m venv .env  
 source .env/bin/activate  
-pip install -e .  
-"
+pip install -e .
+
+
