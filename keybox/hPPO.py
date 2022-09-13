@@ -1,4 +1,3 @@
-from gym import make
 from torch.distributions.multivariate_normal import MultivariateNormal
 from collections import namedtuple, deque
 import torch.nn.functional as F
@@ -6,10 +5,8 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import torch
-import pybullet_envs
 from gym import make
 
-#import gym_maze
 import gym_examples
 import gym
 import time
