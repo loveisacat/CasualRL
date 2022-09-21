@@ -126,7 +126,7 @@ class PPO:
 
         return log_prob.unsqueeze(1), old_log_prob.unsqueeze(1),
 
-    def update(self):
+    def update(self, meta):
 
         for _ in range(self.epochs):
             states, actions, next_states, rewards, done = self.buffer.sample(self.batch_size)
@@ -134,7 +134,10 @@ class PPO:
             V_cur = algo.critic(states)
             with torch.no_grad():
                 V_next = algo.critic(next_states)
-            V_target = rewards + (1 - done) * self.gamma * V_next
+            if meta == True:
+                 V_target = rewards + (1 - True) * self.gamma * V_next
+            else:
+                 V_target = rewards + (1 - done) * self.gamma * V_next
             advantage = (V_target - V_cur).detach()
             advantage = (advantage - advantage.mean()) / (advantage.std())
 
@@ -214,7 +217,6 @@ if __name__ == "__main__":
          state = transform(ori_state)
          total_reward = 0
          done = False
-         keys = 0
          for j in range(MAX_T):
             action = algo.act(state)
             action_pro = np.argmax(action)
@@ -224,18 +226,7 @@ if __name__ == "__main__":
             next_state, reward, done, _ = env.step(action_env)
             if done == False and reward == 0:
                 reward = - 1.0/MAX_T
-            key1 = np.array([3,0])
-            key2 = np.array([0,3])
-            key3 = np.array([0,2])
-            if (next_state == key1).all() and keys == 0:
-                 keys = 1
-            if (next_state == key2).all() and keys == 1:
-                 keys = 2
-            if (next_state == key3).all() and keys == 2:
-                 keys = 3
-            #if state == np.array([4,2]) and keys != 3:
-            #     next_state = np.array([4,2])
-
+          
             state = transform(next_state['agent'])
             total_reward += reward
             if done:
@@ -259,18 +250,15 @@ if __name__ == "__main__":
       g.append(np.array([6,2]))
       g.append(np.array([6,6]))
       for i in range(episodes):
-        keys = 0
         ori_state = env.reset()['agent']
         state = transform(ori_state)
         total_reward = 0
         steps = 0
         done = False
-        index = epsGreedy(state)
-        goal = g[np.argmax(algo_g.act(state)).item()]
-        print(goal)
-        r = 0
-        #while not (done or r > 0):
         while (not done and steps < MAX_T):
+          goal = g[np.argmax(algo_g.act(state)).item()]
+          r = 0
+          while (not done and steps < MAX_T and r<=0):
             action = algo.act(state)
             s0 = state[0][0].item()
             s1 = state[0][1].item()
@@ -285,20 +273,20 @@ if __name__ == "__main__":
             next_state = transform(next_state['agent'])
             steps += 1
             r = intrinsic_reward(state, action, next_state, goal)
-            r = r + reward
-            total_reward += r
-            algo.buffer.add(state, next_state, transform(r), transform(action), transform(done), goal)
+            R = r + reward
+            total_reward += R
+            algo.buffer.add(state, next_state, transform(R), transform(action), transform(done), goal)
             #algo.buffer.add(state, next_state, transform(reward), transform(action), transform(done), r)
             
 
             if len(algo.buffer) == algo.trajectory_size:
-                algo.update()
+                algo.update(False)
             state = next_state
 
         rewards.append(total_reward)
-        algo_g.buffer.add(state, next_state, transform(total_reward), transform(action), transform(done), goal)
+        algo_g.buffer.add(state, next_state, transform(total_reward), transform(action), transform(done), r)
         if len(algo_g.buffer) >= 64:
-           algo_g.update() 
+           algo_g.update(True) 
         if len(rewards) == 50 and np.mean(rewards) > best:
             best = np.mean(rewards)
             print(f'NEW BEST {best}')
