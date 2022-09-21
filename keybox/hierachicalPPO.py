@@ -12,7 +12,7 @@ import gym
 import time
 import os
 
-os.environ["SDL_VIDEODRIVER"] = "dummy"
+#os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 import matplotlib.pyplot as plt
 
@@ -286,7 +286,7 @@ if __name__ == "__main__":
             steps += 1
             r = intrinsic_reward(state, action, next_state, goal)
             r = r + reward
-            total_reward += R
+            total_reward += r
             algo.buffer.add(state, next_state, transform(r), transform(action), transform(done), goal)
             #algo.buffer.add(state, next_state, transform(reward), transform(action), transform(done), r)
             
